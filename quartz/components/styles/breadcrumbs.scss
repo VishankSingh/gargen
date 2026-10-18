@@ -1,0 +1,47 @@
+@use "../../styles/variables.scss" as *;
+
+.breadcrumb-container {
+  &:empty {
+    display: none;
+  }
+
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--headerFont);
+  font-size: 0.8rem;
+  color: var(--gray);
+  line-height: 1.2;
+
+  a {
+    color: var(--gray);
+    text-decoration: none;
+
+    &:hover {
+      background: var(--dark);
+      color: var(--light);
+    }
+  }
+
+  .breadcrumb-element {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.35rem;
+
+    p {
+      margin: 0;
+      padding: 0;
+      line-height: normal;
+    }
+
+    &:last-child {
+      color: var(--darkgray);
+    }
+  }
+}

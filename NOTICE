@@ -1,0 +1,23 @@
+Project Licensing and Attribution Notice
+
+1. Core License & Modifications
+-------------------------------
+All new code, customizations, and modifications in this repository are 
+licensed under the GNU Affero General Public License v3 (AGPL-3.0). 
+See the accompanying `LICENSE` file for full terms.
+
+2. Original Software Engine
+---------------------------
+This project is built upon and contains code derived from the "Quartz" 
+framework by Jacky Zhao (https://github.com/jackyzha0/quartz). 
+
+The original code is used under the terms of the MIT License. 
+The original copyright notice and MIT text have been preserved 
+intact in the `LICENSE-jackyzha0` file in this repository.
+
+3. Design Attribution
+---------------------
+The visual layout, user experience, and aesthetic design of this website 
+were inspired by the personal website of Aaron Pham (https://github.com/aarnphm/aarnphm.github.io). 
+No direct code was copied from their repository; attribution is given 
+here for design inspiration and creative concepts.

@@ -1,0 +1,19 @@
+.content-meta {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--gray);
+  font-family: var(--codeFont);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+
+  &[show-comma="true"] {
+    > *:not(:last-child) {
+      margin-right: 8px;
+
+      &::after {
+        content: ",";
+      }
+    }
+  }
+}

@@ -1,0 +1,647 @@
+@use "./base.scss";
+@use "./variables.scss" as *;
+
+body[data-slug="index"] img {
+  filter: invert(0%);
+  opacity: 0.85;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+
+  // only allow synthesizing italics but not bold
+  font-synthesis: style;
+}
+
+body[data-slug="thoughts/craft"] {
+  & li:has(> img, > video) {
+    list-style-type: none;
+
+    & > img,
+    & > video {
+      margin: 1rem 0;
+    }
+  }
+
+  article > ul {
+    padding-left: 0;
+
+    & > li {
+      list-style-type: none;
+      margin: 1rem 0;
+    }
+  }
+}
+
+pre.poetry {
+  font-size: 1.2rem;
+  font-family: biro_script_standardRgus;
+  border: none;
+  padding: 0;
+  position: unset;
+}
+
+.meta,
+.content-meta {
+  font-family: var(--codeFont), var(--bodyFont);
+}
+
+audio::-webkit-media-controls-panel {
+  background-color: var(--lightgray);
+}
+
+#quartz-root {
+  isolation: isolate;
+}
+
+.page-title {
+  font-family: var(--titleFont, var(--headerFont));
+
+  a {
+    color: var(--dark);
+    text-decoration: none;
+
+    &:hover {
+      background: none;
+      color: var(--dark);
+    }
+  }
+}
+
+// Collapse the search to just the magnifying-glass icon (drop the bar).
+// The button still opens the search modal on click.
+.search {
+  min-width: 0;
+  max-width: none;
+
+  & > .search-button {
+    border: none;
+    width: auto;
+    height: 20px;
+    padding: 0;
+
+    & > p {
+      display: none;
+    }
+
+    & svg {
+      margin: 0;
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// On mobile the left sidebar is a flex row; make the header flex-component span
+// the full width so PageTitle's grow:true still acts as a spacer, pushing the
+// search/darkmode icons to the right edge (same as desktop).
+@media all and ($mobile) {
+  .sidebar.left > .flex-component {
+    width: 100%;
+  }
+}
+
+// match the darkmode toggle to the search icon: a 20x20 flex-centered box
+// (default is 20x32 with the svg absolutely positioned), so the two icons
+// line up exactly on the header row
+.darkmode {
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & svg {
+    position: static;
+  }
+}
+
+
+// "See N more" links: dimmed body text with an underline for clickability,
+// instead of the bold, accent-colored default link styling.
+a.see-more {
+  font-weight: 400;
+  color: var(--darkgray);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  opacity: 0.6;
+
+  &:hover {
+    color: var(--darkgray);
+    opacity: 0.85;
+  }
+}
+
+// Footnotes in Berkeley Mono
+.data-footnote-ref,
+a[data-footnote-ref] {
+  color: var(--darkgray);
+  font-family: var(--codeFont);
+  font-weight: 500;
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+
+  &:hover {
+    background: var(--dark);
+    color: var(--light);
+  }
+}
+
+a[data-footnote-backref] {
+  font-family: var(--codeFont);
+  text-decoration: none;
+  background: inherit;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--darkgray);
+    background: transparent;
+  }
+}
+
+// Tag chips: minimalist bordered mono tags with inverted hover
+a.internal.tag-link,
+.tag-link {
+  font-family: var(--codeFont);
+  font-size: 0.75rem;
+  color: var(--darkgray);
+  background-color: transparent;
+  border: 1px solid var(--gray);
+  border-radius: var(--radius-none);
+  padding: 1px 6px;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--dark);
+    color: var(--light);
+    border-color: var(--dark);
+    opacity: 1;
+  }
+}
+
+// smooth the light/dark theme swap. Bare `*` has zero specificity, so any
+// element with its own `transition` rule overrides this rather than losing it.
+* {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    fill 0.15s ease;
+}
+
+// fade-in elements
+body.animation-ready #quartz-body {
+  [saved-theme="dark"] & {
+    --animation-name: fade2;
+  }
+
+  [saved-theme="light"] & {
+    --animation-name: fade;
+  }
+
+  // Diagonal cascade with row emphasis: rows within a column are the dominant
+  // motion, and the next column only starts ~75% of the way through the
+  // previous one. Column 1 has ~5 rows (range 4·row), so a column step of
+  // 3·row makes column 2 begin at the 75% mark. 0.2s head start.
+  @for $i from 1 through 4 {
+    @for $j from 1 through 8 {
+      & > *:nth-child(#{$i}) > *:nth-child(#{$j}) {
+        animation: var(--animation-name) 0.5s ease 1 normal backwards;
+        animation-delay: #{0.2 + 0.45 * ($i - 1) + 0.15 * ($j - 1)}s;
+      }
+    }
+  }
+}
+
+// hack to duplicate the fade-in animation so that we reset the animation in both directions
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade2 {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+// footnote back-reference arrow (↩, U+21A9) defaults to emoji presentation;
+// force plain text rendering so it's a simple glyph, not a colored emoji
+.data-footnote-backref {
+  font-variant-emoji: text;
+}
+
+// custom audio player. audioPlayer.inline removes the native <audio>'s
+// `controls`, so it renders nothing (no hide hack needed) while still loading
+// and driving playback. .audio-player is the custom UI inserted next to it.
+.audio-player {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  & > .ap-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .ap-play {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: color-mix(in srgb, var(--tertiary) 80%, white);
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+  }
+
+  .ap-bars {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 2rem;
+    cursor: pointer;
+
+    & > span {
+      flex: 0 1 2px;
+      min-height: 2px;
+      background: var(--lightgray);
+      transition: background 0.1s ease;
+
+      &.played {
+        background: var(--tertiary);
+      }
+    }
+  }
+
+  .ap-time {
+    font-size: 0.8rem;
+    color: var(--gray);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// index-only decorative Three.js dappled-light scene (see dappledLight.inline).
+// komorebi 3-tone palette: deep shadow -> warm gold light -> bright wall.
+// Theme-aware so both modes read well (warm gold on navy/prussian).
+:root {
+  --komorebi-shadow: var(--dark);
+  --komorebi-mid: var(--secondary);
+  --komorebi-light: var(--light);
+  --komorebi-frame: var(--dark);
+  --komorebi-gap: var(--light);
+  --komorebi-center: 0.38;
+}
+[saved-theme="dark"] {
+  --komorebi-shadow: #1c1b1a;
+  --komorebi-mid: var(--secondary);
+  --komorebi-light: var(--dark);
+  --komorebi-frame: var(--dark);
+  --komorebi-gap: #100f0f;
+  --komorebi-center: 0.38;
+}
+
+// Reserve the box up-front (fixed height + border) so there's no layout shift
+// while Three.js lazy-loads; the canvas fades in once rendered.
+// .dappled-scene is the homepage banner (queried by dappledLight.inline.ts);
+// .dappled-frame is the same box for embedding dappled canvases anywhere else.
+.dappled-scene,
+.dappled-frame {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  height: 180px;
+  margin: 0 0 1.5rem;
+  padding: 2px; // gap between the canvas and the border (matches border width)
+  border: 2px solid var(--komorebi-frame); // frame contrasts the page in both themes
+  overflow: hidden;
+  background-color: var(--komorebi-gap);
+
+  & > .dappled-canvas {
+    display: block;
+    image-rendering: pixelated; // crisp nearest-neighbor upscale of the low-res render
+    opacity: 0;
+    animation: dappled-fade-in 0.8s ease forwards;
+  }
+
+  // on mobile the header stacks directly above the content, so add breathing room
+  @media all and ($mobile) {
+    margin-top: 1.5rem;
+  }
+}
+
+@keyframes dappled-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+// shared control styles: the Konami debug panel and the inline demos in
+// posts/dappled-light both use these sliders and buttons
+@mixin dappled-slider-label {
+  display: block;
+
+  span {
+    display: block;
+    margin-bottom: 3px;
+    opacity: 0.85;
+  }
+
+  // thin slider track + small thumb
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+    cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+      height: 2px;
+      background: color-mix(in srgb, var(--gray) 50%, transparent);
+    }
+    &::-moz-range-track {
+      height: 2px;
+      background: color-mix(in srgb, var(--gray) 50%, transparent);
+    }
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 9px;
+      height: 9px;
+      margin-top: -3.5px;
+      border-radius: 50%;
+      background: var(--secondary);
+    }
+    &::-moz-range-thumb {
+      width: 9px;
+      height: 9px;
+      border: none;
+      border-radius: 50%;
+      background: var(--secondary);
+    }
+  }
+}
+
+@mixin dappled-control-button {
+  padding: 4px 6px;
+  background: var(--lightgray);
+  color: var(--dark);
+  border: 1px solid var(--dark);
+  border-radius: 0;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--secondary);
+    color: var(--light);
+  }
+}
+
+// dappled-light debug panel (Konami toggle: up up down down left right left right)
+.dappled-debug {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  width: 230px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0.75rem;
+  // site theme vars so the panel flips with light/dark mode
+  background: color-mix(in srgb, var(--light) 95%, transparent);
+  color: var(--dark);
+  border: 1px solid var(--dark);
+  border-radius: 0;
+  font-family: var(--codeFont, monospace);
+  font-size: 0.72rem;
+
+  // live sparkline charts (fps, wind)
+  .dappled-chart {
+    margin: 0 0 0.5rem;
+
+    span {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--secondary);
+      opacity: 0.9;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 30px;
+      background: color-mix(in srgb, var(--secondary) 10%, transparent);
+    }
+  }
+
+  // section headers
+  .dappled-debug-h {
+    margin: 0.8rem 0 0.3rem;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--lightgray);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.66rem;
+    opacity: 0.7;
+
+    &:first-of-type {
+      margin-top: 0.3rem;
+    }
+  }
+
+  .dappled-debug-btn {
+    @include dappled-control-button;
+    display: block;
+    width: 100%;
+    margin: 0.3rem 0;
+    font-size: 0.7rem;
+  }
+
+  label {
+    @include dappled-slider-label;
+    margin: 0.4rem 0;
+  }
+
+  // layer / dither toggles: checkbox inline with label
+  label.dappled-debug-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.35rem 0;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      accent-color: var(--secondary);
+    }
+    span {
+      display: inline;
+      margin: 0;
+      opacity: 0.95;
+    }
+  }
+}
+
+// inline strip of dappled controls: same sliders and buttons as the debug
+// panel, laid out as a row (pairs with a .dappled-frame/.dappled-scene above)
+.dappled-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 1.1rem;
+  margin: 0.5rem 0 1.5rem;
+  font-family: var(--codeFont, monospace);
+  font-size: 0.72rem;
+  color: var(--dark);
+
+  button {
+    @include dappled-control-button;
+    padding: 4px 8px;
+  }
+
+  label {
+    @include dappled-slider-label;
+    width: 170px;
+  }
+}
+
+// tuck the strip up under the frame it controls
+.dappled-frame + .dappled-controls,
+.dappled-scene + .dappled-controls {
+  margin-top: -1rem;
+}
+
+// edit-graph diagrams (posts/beating-myers-on-large-replaces):
+// grouped chars (/x/#id) recolor the glyph itself, no pill highlight.
+// the wrapper is a <mark>; the glyph color is an inline shiki style on
+// the inner <span>, so force it to inherit.
+pre > code mark[data-chars-id] {
+  background: none;
+  border-radius: 0;
+  color: var(--dark);
+
+  & > span {
+    color: inherit !important;
+  }
+
+  &[data-chars-id="path"] {
+    color: var(--tertiary);
+  }
+
+  &[data-chars-id="dim"] {
+    color: var(--gray);
+  }
+}
+
+// Explicitly shift top part (header/breadcrumbs), content (.center), and bottom part (footer) to the right
+.header-content,
+.page > #quartz-body .center,
+#quartz-body .center,
+.page > #quartz-body footer,
+#quartz-body footer {
+  position: relative !important;
+  left: 80px !important;
+}
+
+.header-content,
+.page > #quartz-body {
+  max-width: calc(1200px - 80px) !important;
+}
+
+@media all and ($mobile) {
+  .header-content,
+  .page > #quartz-body .center,
+  #quartz-body .center,
+  .page > #quartz-body footer,
+  #quartz-body footer {
+    left: 0 !important;
+  }
+
+  .header-content,
+  .page > #quartz-body {
+    max-width: 100% !important;
+  }
+}
+
+footer {
+  border-top: none !important;
+}
+
+hr.full-width-line {
+  display: block;
+  width: 100vw;
+  max-width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%) translateX(-80px);
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid var(--lightgray);
+  background: none;
+  height: 0;
+  box-sizing: border-box;
+
+  &::after {
+    content: none !important;
+    display: none !important;
+  }
+}
+
+hr.content-line-top {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+hr.content-line-bottom {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+@media all and (max-width: 800px) {
+  hr.full-width-line {
+    transform: translateX(-50%);
+  }
+}
+
+.breadcrumb-container,
+footer {
+  font-family: var(--headerFont) !important;
+}
+
+
+
+
+

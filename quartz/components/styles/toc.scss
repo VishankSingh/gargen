@@ -1,0 +1,285 @@
+@use "../../styles/variables.scss" as *;
+
+.toc {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: visible;
+}
+
+.toc[data-layout="minimal"] {
+  --toc-rail-width: 3.25rem;
+  --toc-label-offset: calc(var(--toc-rail-width) + 0.75rem);
+  --button-height: 0.8rem;
+  --toc-stick-top: clamp(6.5rem, 25vh, 12rem);
+  --toc-scroll-buffer: 48px;
+  --toc-mask-buffer: 32px;
+
+  position: fixed;
+  left: 1.5rem;
+  top: var(--toc-stick-top);
+  z-index: 100;
+  width: var(--toc-rail-width);
+  max-width: var(--toc-rail-width);
+  max-height: calc(100vh - var(--toc-stick-top) - 2rem);
+  min-width: 0;
+  overflow: visible;
+  padding: 0;
+  margin: 0;
+
+  @media all and (max-width: 1200px) {
+    display: none;
+  }
+}
+
+nav#toc-vertical {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  z-index: 10;
+  width: var(--toc-rail-width);
+  max-width: var(--toc-rail-width);
+  max-height: calc(100vh - var(--toc-stick-top) - 3rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0.25rem 0;
+  margin: 0;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  &.is-scrollable {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black var(--toc-mask-buffer),
+      black calc(100% - var(--toc-mask-buffer)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black var(--toc-mask-buffer),
+      black calc(100% - var(--toc-mask-buffer)),
+      transparent 100%
+    );
+  }
+
+  &.is-scrollable.at-start {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black calc(100% - var(--toc-mask-buffer)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black calc(100% - var(--toc-mask-buffer)),
+      transparent 100%
+    );
+  }
+
+  &.is-scrollable.at-end {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black var(--toc-mask-buffer),
+      black 100%
+    );
+    mask-image: linear-gradient(to bottom, transparent 0, black var(--toc-mask-buffer), black 100%);
+  }
+
+  button.toc-item {
+    display: inline-flex;
+    flex: none;
+    border: none;
+    background: transparent;
+    height: var(--button-height, 0.8rem);
+    min-block-size: var(--button-height, 0.8rem);
+    width: 100%;
+    position: relative;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transform-origin: 0 50%;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    box-sizing: border-box;
+
+    &.depth-0, &[data-depth="0"] {
+      --fill-width: 2.1rem;
+    }
+    &.depth-1, &[data-depth="1"] {
+      --fill-width: 1.7rem;
+    }
+    &.depth-2, &[data-depth="2"] {
+      --fill-width: 1.3rem;
+    }
+    &.depth-3, &[data-depth="3"] {
+      --fill-width: 0.95rem;
+    }
+    &.depth-4, &[data-depth="4"] {
+      --fill-width: 0.7rem;
+    }
+    &.depth-5, &[data-depth="5"] {
+      --fill-width: 0.5rem;
+    }
+    &.depth-6, &[data-depth="6"] {
+      --fill-width: 0.4rem;
+    }
+
+    &.in-view {
+      & > .fill {
+        opacity: 1;
+        background-color: var(--dark);
+
+        :root[saved-theme="dark"] & {
+          background-color: #ffffff;
+        }
+      }
+    }
+
+    & > .fill {
+      opacity: 0.35;
+      background-color: var(--darkgray);
+      height: 3px;
+      width: var(--fill-width, 1.25rem);
+      max-width: 100%;
+
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      animation: fillExpand 0.4s forwards;
+      animation-delay: calc((var(--animation-order, 1) - 1) * 0.03s + 0.1s);
+      transition:
+        background-color 0.08s cubic-bezier(0.2, 0, 0, 1),
+        opacity 0.08s cubic-bezier(0.2, 0, 0, 1);
+      will-change: transform;
+    }
+
+    & > .indicator {
+      display: none;
+    }
+  }
+}
+
+@keyframes fillExpand {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.toc[data-layout="minimal"].is-hovering nav#toc-vertical button.toc-item > .fill {
+  background-color: var(--gray);
+  opacity: 0.45;
+}
+
+.toc[data-layout="minimal"].is-hovering nav#toc-vertical button.toc-item.is-active > .fill {
+  background-color: var(--dark);
+  opacity: 1;
+
+  :root[saved-theme="dark"] & {
+    background-color: #ffffff;
+  }
+}
+
+.toc[data-layout="minimal"] > .toc-label {
+  position: absolute;
+  top: 0;
+  left: var(--toc-label-offset, 4rem);
+  max-width: 20rem;
+  color: var(--dark);
+  font-family: var(--codeFont, var(--bodyFont));
+  font-size: 0.825rem;
+  font-weight: 500;
+  line-height: 1.3;
+  padding-block: 0.1em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(0, var(--toc-label-y, 0px), 0) translateY(-50%);
+  transform-origin: 0 50%;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0, 0, 1),
+    opacity 0.15s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform, opacity;
+  z-index: 1000;
+}
+
+.toc[data-layout="minimal"].is-hovering > .toc-label.is-visible {
+  opacity: 1;
+}
+
+button.toc-header {
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+
+  & h3 {
+    font-size: 1rem;
+    display: inline-block;
+    margin: 0;
+  }
+
+  & .fold {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+    opacity: 0.8;
+  }
+
+  &.collapsed .fold {
+    transform: rotateZ(-90deg);
+  }
+}
+
+ul.toc-content.overflow {
+  list-style: none;
+  position: relative;
+  margin: 0.5rem 0;
+  padding: 0;
+  max-height: calc(100% - 2rem);
+  overscroll-behavior: contain;
+
+  & > li > a {
+    color: var(--dark);
+    opacity: 0.35;
+    text-decoration: none;
+    transition:
+      0.2s ease opacity,
+      0.2s ease color;
+
+    &.in-view {
+      opacity: 0.85;
+      font-weight: 500;
+    }
+
+    &:hover {
+      background: transparent;
+      color: var(--dark);
+      opacity: 1;
+      text-decoration: underline;
+    }
+  }
+
+  @for $i from 0 through 6 {
+    & .depth-#{$i} {
+      padding-left: calc(1rem * #{$i});
+    }
+  }
+}

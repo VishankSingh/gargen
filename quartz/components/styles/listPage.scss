@@ -1,0 +1,64 @@
+@use "../../styles/variables.scss" as *;
+
+ul.section-ul {
+  list-style: none;
+  margin-top: 2em;
+  padding-left: 0;
+}
+
+li.section-li {
+  margin-bottom: 0.8em;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--lightgray);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  & > .section {
+    display: grid;
+    grid-template-columns: 8em 3fr 1fr;
+    align-items: baseline;
+
+    @media all and ($mobile) {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+
+      & > .tags {
+        display: none;
+      }
+    }
+
+    & > .desc > h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+
+      & > a {
+        color: var(--dark);
+        text-decoration: underline;
+
+        &:hover {
+          background: var(--dark);
+          color: var(--light);
+        }
+      }
+    }
+
+    & .meta {
+      margin: 0 1em 0 0;
+      font-family: var(--codeFont);
+      font-size: 0.75rem;
+      color: var(--gray);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+// modifications in popover context
+.popover .section {
+  grid-template-columns: 7em 1fr !important;
+  & > .tags {
+    display: none;
+  }
+}

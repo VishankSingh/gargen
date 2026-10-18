@@ -1,0 +1,41 @@
+.recent-notes {
+  & > h3 {
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+    font-family: var(--headerFont);
+    color: var(--dark);
+  }
+
+  & > ul.recent-ul {
+    list-style: none;
+    margin-top: 1rem;
+    padding-left: 0;
+
+    & > li {
+      margin: 1rem 0;
+
+      .section > .desc > h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 500;
+
+        & > a {
+          color: var(--dark);
+          text-decoration: underline;
+
+          &:hover {
+            background: var(--dark);
+            color: var(--light);
+          }
+        }
+      }
+
+      .section > .meta {
+        font-family: var(--codeFont);
+        font-size: 0.75rem;
+        margin: 0.2rem 0 0.5rem 0;
+        color: var(--gray);
+      }
+    }
+  }
+}
